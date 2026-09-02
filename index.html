@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acupuncture Safety Board - 6 เตียง</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f4f7fb;
+  color: #1e2a3a;
+  font-family: 'Segoe UI', Arial, 'Noto Sans Thai', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.topbar {
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid #e7ebf0;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.logo {
+  font-weight: 800;
+  color: #087f70;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+.topbar .spacer { flex: 1; }
+.topbar button {
+  border: 0;
+  background: #f0f3f7;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.15s;
+}
+.topbar button:hover { background: #e2e8f0; }
+.sync-status {
+  font-size: 13px;
+  color: #087f70;
+  background: #e8f7ef;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sync-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.sync-status .dot.online { background: #13bd72; }
+.sync-status .dot.offline { background: #e83d72; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.toolbar input, .toolbar select {
+  padding: 10px 14px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+}
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.btn-primary { background: #087f70; color: #fff; }
+.btn-primary:hover { background: #066b5e; }
+.btn-gray { background: #edf1f5; color: #1e2a3a; }
+.btn-gray:hover { background: #dce3eb; }
+.btn-print { background: #7c3aed; color: #fff; }
+.btn-print:hover { background: #6d28d9; }
+.legend {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 500;
+}
+.legend span:before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.lgreen:before { background: #13bd72; }
+.lorange:before { background: #f39c12; }
+.lred:before { background: #e83d72; }
+.lfree:before { background: #b8c2cc; }
+
+.dashboard {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #e5e9ef;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+.dash-item {
+  text-align: center;
+  padding: 4px 0;
+}
+.dash-item .num {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0b2a3e;
+  line-height: 1.2;
+}
+.dash-item .label {
+  font-size: 13px;
+  color: #6a7b8c;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.dash-item .num.green { color: #13bd72; }
+.dash-item .num.orange { color: #f39c12; }
+.dash-item .num.red { color: #e83d72; }
+.dash-item .num.blue { color: #3f66e8; }
+.dash-item .num.purple { color: #8b5cf6; }
+.dash-item .num.male-color { color: #2563eb; }
+.dash-item .num.female-color { color: #ec4899; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+.card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e5e9ef;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.card.free { border-top: 5px solid #b8c2cc; }
+.card.using { border-top: 5px solid #13bd72; }
+.card.warning { border-top: 5px solid #f39c12; }
+.card.danger { border-top: 5px solid #e83d72; }
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef1f4;
+}
+.bed {
+  font-size: 16px;
+  font-weight: 800;
+  color: #008f7c;
+}
+.bed.male-bed { color: #2563eb; }
+.bed.female-bed { color: #ec4899; }
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+.status-free { background: #aab4bf; }
+.status-warn { background: #f3a11b; }
+.status-danger { background: #e83d72; }
+.status-using { background: #13bd72; }
+.menu {
+  font-size: 20px;
+  color: #5a6b7a;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.patient {
+  padding: 14px 12px 8px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: #eef2f6;
+}
+.avatar.male { background: #dbeafe; }
+.avatar.female { background: #fce4ec; }
+.name {
+  font-size: 17px;
+  font-weight: 800;
+}
+.meta {
+  font-size: 13px;
+  color: #6d7884;
+  margin-top: 2px;
+}
+.tags {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+}
+.tag {
+  border: 1px solid #d9e2e9;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tag.green { color: #087f70; border-color: #91dfce; }
+.tag.orange { color: #d78a00; border-color: #ffd78a; }
+.tag.red { color: #d32f55; border-color: #ffc0cf; }
+.tag.purple { color: #7c3aed; border-color: #c4b5fd; }
+
+.treatment-panel {
+  padding: 0 14px 8px;
+  flex: 0 0 auto;
+}
+.field-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #667580;
+  margin: 6px 0 4px;
+  letter-spacing: 0.3px;
+}
+.diagnosis {
+  background: #f8fafc;
+  border: 1px solid #e4e9ef;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  min-height: 32px;
+}
+.locations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.location {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 16px;
+  background: #f0f4f9;
+  border: 1px solid #d8e0e7;
+  color: #52616d;
+}
+.location.active {
+  background: #dff7ef;
+  border-color: #72d7bb;
+  color: #087f70;
+  font-weight: 700;
+}
+.location.more { background: #f1f4f7; color: #64717b; }
+
+.body-preview {
+  padding: 8px 14px;
+  text-align: center;
+  background: #f8fafc;
+  border-top: 1px solid #eef1f4;
+}
+.body-preview svg {
+  width: 100%;
+  max-width: 140px;
+  height: 140px;
+  display: inline-block;
+}
+.body-preview .preview-label {
+  font-size: 10px;
+  color: #8a9aa8;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.preview-dot-card {
+  fill: #e83d72;
+  stroke: #c62850;
+  stroke-width: 2;
+  r: 5;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.preview-dot-card.visible {
+  opacity: 1;
+}
+
+.needle-panel {
+  margin: 4px 14px 8px;
+  background: #f1f8f6;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.needle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.needle-box {
+  background: #fff;
+  border: 1px solid #dfe9e7;
+  border-radius: 8px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.needle-box b {
+  display: block;
+  font-size: 24px;
+  color: #087f70;
+}
+.needle-box small { color: #71808c; font-size: 11px; }
+.progress {
+  height: 6px;
+  background: #dce7e5;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress i {
+  display: block;
+  height: 100%;
+  background: #12b974;
+  width: 0%;
+  transition: width 0.3s;
+}
+.time-label {
+  text-align: center;
+  font-size: 12px;
+  color: #687780;
+  margin-top: 4px;
+}
+.alert {
+  margin: 4px 14px 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-align: center;
+  font-size: 13px;
+  display: none;
+}
+.alert.show { display: block; }
+.alert.ok { background: #e8f7ef; color: #087f55; }
+.alert.bad { background: #ffe9ed; color: #c62850; }
+.alert.warn { background: #fff4df; color: #9a6400; }
+.danger-ack {
+  background: #ffe9ed;
+  color: #b51f46;
+  border: 1px solid #ffb6c5;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 0 14px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: auto;
+}
+.actions button {
+  border: 0;
+  padding: 12px 8px;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.1s;
+}
+.actions .check { background: #4d6fe8; }
+.actions .check:hover { background: #3b5bd4; }
+.actions .discharge { background: #ed4779; }
+.actions .discharge:hover { background: #d43263; }
+.actions .print-btn { background: #7c3aed; }
+.actions .print-btn:hover { background: #6d28d9; }
+
+.free-body {
+  padding: 30px 12px;
+  text-align: center;
+  color: #8b96a0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.free-body .plus { font-size: 38px; font-weight: 300; }
+.empty-btn { margin-top: 12px; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal.show { display: flex; }
+.dialog {
+  background: #fff;
+  width: min(900px, 100%);
+  max-height: 94vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.dialog h2 { margin-top: 0; font-weight: 700; color: #0b2a3e; }
+.form { display: grid; gap: 14px; }
+.body-map-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.body-map {
+  background: #f7fafc;
+  border: 1px solid #dfe6ed;
+  border-radius: 14px;
+  padding: 8px;
+  text-align: center;
+}
+.body-map h3 { font-size: 13px; margin: 4px 0 8px; color: #5b6873; }
+.body-svg {
+  width: 100%;
+  max-width: 200px;
+  height: 260px;
+  margin: 0 auto;
+  display: block;
+}
+.body-zone {
+  fill: #e9eef2;
+  stroke: #aeb9c2;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: 0.12s;
+}
+.body-zone:hover { fill: #d9f2eb; }
+.body-zone.active { fill: #18b783; stroke: #087f70; stroke-width: 2.5; }
+
+.preview-dot {
+  fill: #e83d72;
+  stroke: #c62850;
+  stroke-width: 2;
+  r: 6;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.preview-dot.visible {
+  opacity: 1;
+}
+
+.selected-list {
+  margin-top: 4px;
+  min-height: 30px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px dashed #cfd8df;
+  border-radius: 10px;
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.methods {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.method {
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: #eef4ff;
+  color: #3859b8;
+  border: 1px solid #d8e2ff;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.method input { margin: 0; }
+.form label { font-weight: 700; font-size: 14px; margin-bottom: 0; }
+.form input, .form select, .form textarea {
+  padding: 10px 14px;
+  border: 1px solid #ccd5de;
+  border-radius: 10px;
+  font-size: 15px;
+  width: 100%;
+  font-family: inherit;
+}
+.form textarea { resize: vertical; min-height: 50px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.big-alert {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #b40000f2;
+  color: #fff;
+  text-align: center;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.big-alert.show { display: flex; }
+.big-alert h1 { font-size: 58px; margin: 0 0 10px; }
+.big-alert .box { font-size: 26px; line-height: 1.6; max-width: 800px; }
+.big-alert .sub { font-size: 18px; margin: 20px 0; opacity: 0.9; }
+.big-alert .btn { font-size: 18px; padding: 14px 40px; }
+
+/* Patient history suggestion dropdown */
+.suggestions-box {
+  position: relative;
+}
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 60;
+  display: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.suggestions-list.show { display: block; }
+.suggestions-list .suggestion-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f3f7;
+  font-size: 14px;
+  transition: 0.1s;
+}
+.suggestions-list .suggestion-item:hover {
+  background: #e8f7ef;
+}
+.suggestions-list .suggestion-item .suggestion-hn {
+  color: #6a7b8c;
+  font-size: 12px;
+  margin-left: 8px;
+}
+.suggestions-list .suggestion-item .suggestion-detail {
+  color: #6a7b8c;
+  font-size: 12px;
+  display: block;
+  margin-top: 2px;
+}
+
+@media print {
+  .no-print, .topbar, .toolbar, .dashboard, .actions, .alert, .danger-ack { display: none !important; }
+  body { background: #fff; margin: 0; padding: 0; }
+  .container { max-width: 100%; padding: 0; margin: 0; }
+  .grid { display: block; padding: 0; margin: 0; }
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1.5px solid #333;
+    border-radius: 8px;
+    box-shadow: none;
+    margin-bottom: 12px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .card .patient { padding: 10px 12px 4px; }
+  .card .avatar { width: 50px; height: 50px; font-size: 24px; }
+  .card .name { font-size: 15px; }
+  .card .meta { font-size: 12px; }
+  .card .treatment-panel { padding: 0 12px 4px; }
+  .card .diagnosis { font-size: 12px; min-height: 24px; padding: 4px 8px; }
+  .card .locations .location { font-size: 10px; padding: 2px 6px; }
+  .card .body-preview { padding: 4px 12px; }
+  .card .body-preview svg { max-width: 100px; height: 100px; }
+  .card .needle-panel { margin: 2px 12px 4px; padding: 6px 10px; }
+  .card .needle-box b { font-size: 18px; }
+  .card .needle-box small { font-size: 10px; }
+  .card .time-label { font-size: 11px; }
+  .card .card-head { padding: 8px 12px; }
+  .card .bed { font-size: 14px; }
+  .card .free-body { padding: 20px 12px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+}
+
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .legend { margin-left: 0; width: 100%; justify-content: flex-start; }
+  .body-map-wrap { grid-template-columns: 1fr; }
+  .dialog { padding: 16px; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 12px; }
+  .dashboard { grid-template-columns: repeat(3, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar no-print">
+  <div class="logo">🪡 TCM Safety โรงพยาบาลเฉลิมพระเกียรติ นครราชสีมา</div>
+  <div class="spacer"></div>
+  <div class="sync-status" id="syncStatus">
+    <span class="dot online" id="syncDot"></span>
+    <span id="syncText">ซิงค์ข้อมูล</span>
+  </div>
+  <button onclick="openSettings()">⚙ ตั้งค่า</button>
+  <button onclick="window.print()">🖨 พิมพ์</button>
+</div>
+
+<div class="container">
+  <div class="toolbar no-print">
+    <button class="btn btn-primary" onclick="openAdd()">＋ เพิ่มผู้ป่วย</button>
+    <select id="filter" onchange="render()">
+      <option value="all">ทุกเตียง</option>
+      <option value="using">กำลังรักษา</option>
+      <option value="warning">ใกล้ครบเวลา</option>
+      <option value="danger">ต้องตรวจสอบ</option>
+      <option value="free">เตียงว่าง</option>
+    </select>
+    <input id="search" oninput="render()" placeholder="ค้นหาชื่อ / HN / เตียง" style="min-width:180px;">
+    <div class="legend">
+      <span class="lgreen">กำลังรักษา</span>
+      <span class="lorange">ใกล้ครบ</span>
+      <span class="lred">ต้องตรวจ</span>
+      <span class="lfree">เตียงว่าง</span>
+    </div>
+  </div>
+
+  <div class="dashboard no-print" id="dashboard">
+    <div class="dash-item"><div class="num blue" id="totalBeds">0</div><div class="label">เตียงทั้งหมด</div></div>
+    <div class="dash-item"><div class="num green" id="usingCount">0</div><div class="label">กำลังรักษา</div></div>
+    <div class="dash-item"><div class="num orange" id="warningCount">0</div><div class="label">ใกล้ครบเวลา</div></div>
+    <div class="dash-item"><div class="num red" id="dangerCount">0</div><div class="label">ต้องตรวจสอบ</div></div>
+    <div class="dash-item"><div class="num purple" id="freeCount">0</div><div class="label">เตียงว่าง</div></div>
+    <div class="dash-item"><div class="num male-color" id="maleCount">0</div><div class="label">👨 ชาย</div></div>
+    <div class="dash-item"><div class="num female-color" id="femaleCount">0</div><div class="label">👩 หญิง</div></div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal no-print">
+  <div class="dialog">
+    <h2 id="modalTitle">เพิ่มผู้ป่วยเข้าห้องฝังเข็ม</h2>
+    <div class="form">
+      <label>เตียง</label>
+      <select id="fBed">
+        <option value="M01">M01 (ชาย)</option>
+        <option value="M02">M02 (ชาย)</option>
+        <option value="F01">F01 (หญิง)</option>
+        <option value="F02">F02 (หญิง)</option>
+        <option value="F03">F03 (หญิง)</option>
+        <option value="F04">F04 (หญิง)</option>
+      </select>
+      
+      <div class="form-row">
+        <div>
+          <label>ชื่อ-นามสกุล</label>
+          <input id="fName" placeholder="ชื่อ-นามสกุล">
+        </div>
+        <div>
+          <label>เพศ</label>
+          <select id="fGender">
+            <option value="ชาย">ชาย</option>
+            <option value="หญิง">หญิง</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label>HN</label>
+          <input id="fHN" placeholder="HN">
+        </div>
+        <div>
+          <label>อายุ</label>
+          <input id="fAge" type="number" placeholder="อายุ">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label>น้ำหนัก (กก.)</label>
+          <input id="fWeight" type="number" step="0.1" placeholder="น้ำหนัก">
+        </div>
+        <div>
+          <label>ส่วนสูง (ซม.)</label>
+          <input id="fHeight" type="number" step="0.1" placeholder="ส่วนสูง">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label>BP (Blood Pressure)</label>
+          <input id="fBP" placeholder="เช่น 120/80">
+        </div>
+        <div>
+          <label>P / T / R</label>
+          <input id="fPTR" placeholder="P:72 T:36.5 R:16">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label>BMI</label>
+          <input id="fBMI" type="number" step="0.1" placeholder="BMI">
+        </div>
+        <div>
+          <label>รอบเอว (ซม.)</label>
+          <input id="fWaist" type="number" step="0.1" placeholder="รอบเอว">
+        </div>
+      </div>
+      
+      <label>อาการสำคัญ</label>
+      <textarea id="fChiefComplaint" placeholder="อาการสำคัญที่มารักษา"></textarea>
+      
+      <label>อาการร่วม</label>
+      <textarea id="fAssociatedSymptoms" placeholder="อาการอื่นๆ ที่พบร่วม"></textarea>
+      
+      <div class="form-row">
+        <div>
+          <label>ชีพจร (Pulse)</label>
+          <input id="fPulse" placeholder="ลักษณะชีพจร">
+        </div>
+        <div>
+          <label>ลิ้น (Tongue)</label>
+          <input id="fTongue" placeholder="ลักษณะลิ้น">
+        </div>
+      </div>
+      
+      <label>การวินิจฉัยโรคทางปัจจุบัน</label>
+      <input id="fCurrentDiagnosis" placeholder="การวินิจฉัยโรคทางปัจจุบัน">
+      
+      <label>การวินิจฉัยโรคทางแพทย์แผนจีน</label>
+      <input id="fTCMDiagnosis" placeholder="การวินิจฉัยโรคทางแพทย์แผนจีน">
+      
+      <label>วิธีการรักษา</label>
+      <div class="methods" id="methodPicker">
+        <label class="method"><input type="checkbox" value="ฝังเข็ม"> ฝังเข็ม</label>
+        <label class="method"><input type="checkbox" value="ครอบแก้ว"> ครอบแก้ว</label>
+        <label class="method"><input type="checkbox" value="กระตุ้นไฟฟ้า"> กระตุ้นไฟฟ้า</label>
+        <label class="method"><input type="checkbox" value="โคมไฟอินฟาเรด"> โคมไฟอินฟาเรด</label>
+        <label class="method"><input type="checkbox" value="นวดกดจุด"> นวดกดจุด</label>
+        <label class="method"><input type="checkbox" value="สมุนไพร"> สมุนไพร</label>
+      </div>
+      
+      <label>ตำแหน่งที่รักษา — คลิกบนร่างกาย</label>
+      <div class="body-map-wrap">
+        <div class="body-map"><h3>ด้านหน้า</h3>
+          <svg class="body-svg" viewBox="0 0 220 300">
+            <circle class="body-zone" data-zone="ศีรษะ" cx="110" cy="35" r="22" onclick="toggleZone(this)"></circle>
+            <path class="body-zone" data-zone="หน้า" d="M96 31 Q110 20 124 31 L120 48 Q110 56 100 48 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="คอ" d="M98 50 Q110 44 122 50 L120 62 Q110 66 100 62 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หน้าท้อง" d="M90 100 L130 100 L132 135 L88 135 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หน้าท้องส่วนล่าง" d="M90 135 L130 135 L128 165 L92 165 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="แขนซ้าย" d="M86 78 L65 82 L38 135 L48 141 L78 103 L93 94 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="แขนขวา" d="M134 78 L155 82 L182 135 L172 141 L142 103 L127 94 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="บ่าไหล่ซ้าย" d="M88 73 L65 82 L78 103 L98 91 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="บ่าไหล่ขวา" d="M132 73 L155 82 L142 103 L122 91 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เอวล่างซ้าย" d="M88 160 L108 160 L108 190 L90 190 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เอวล่างขวา" d="M112 160 L132 160 L130 190 L112 190 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="ขาซ้าย" d="M90 180 L108 182 L105 246 L91 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="ขาขวา" d="M112 182 L130 180 L129 246 L115 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เท้าซ้าย" d="M90 246 L105 246 L105 267 L84 267 Q82 257 90 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เท้าขวา" d="M115 246 L130 246 Q138 257 136 267 L115 267 Z" onclick="toggleZone(this)"></path>
+          </svg>
+        </div>
+        <div class="body-map"><h3>ด้านหลัง</h3>
+          <svg class="body-svg" viewBox="0 0 220 300">
+            <circle class="body-zone" data-zone="ศีรษะ" cx="110" cy="35" r="22" onclick="toggleZone(this)"></circle>
+            <path class="body-zone" data-zone="ต้นคอ" d="M98 50 Q110 44 122 50 L120 62 Q110 66 100 62 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หลังส่วนบน" d="M90 65 L130 65 L130 105 L90 105 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หลังส่วนล่าง" d="M90 105 L130 105 L130 150 L90 150 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หลังซ้าย" d="M88 150 L108 150 L108 185 L90 185 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="หลังขวา" d="M112 150 L132 150 L130 185 L112 185 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="แขนซ้าย" d="M86 78 L65 82 L38 135 L48 141 L78 103 L93 94 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="แขนขวา" d="M134 78 L155 82 L182 135 L172 141 L142 103 L127 94 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="บ่าไหล่ซ้าย" d="M88 73 L65 82 L78 103 L98 91 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="บ่าไหล่ขวา" d="M132 73 L155 82 L142 103 L122 91 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="ขาซ้าย" d="M90 180 L108 182 L105 246 L91 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="ขาขวา" d="M112 182 L130 180 L129 246 L115 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เท้าซ้าย" d="M90 246 L105 246 L105 267 L84 267 Q82 257 90 246 Z" onclick="toggleZone(this)"></path>
+            <path class="body-zone" data-zone="เท้าขวา" d="M115 246 L130 246 Q138 257 136 267 L115 267 Z" onclick="toggleZone(this)"></path>
+          </svg>
+        </div>
+        <div class="body-map"><h3>📍 ตำแหน่งที่เลือก</h3>
+          <svg class="body-svg" viewBox="0 0 220 300">
+            <rect x="10" y="10" width="200" height="280" rx="10" fill="#f0f5fa" stroke="#dce3ec" stroke-width="1"/>
+            <circle cx="110" cy="45" r="25" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <path d="M75 80 L145 80 L150 180 L70 180 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <path d="M75 85 L50 90 L40 150 L55 150 L70 100 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <path d="M145 85 L170 90 L180 150 L165 150 L150 100 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <path d="M85 175 L75 250 L95 250 L105 175 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <path d="M135 175 L125 250 L145 250 L115 175 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+            <circle class="preview-dot" id="pdot-ศีรษะ" cx="110" cy="45" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หน้า" cx="110" cy="30" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-คอ" cx="110" cy="58" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-ต้นคอ" cx="110" cy="58" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หน้าท้อง" cx="110" cy="110" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หน้าท้องส่วนล่าง" cx="110" cy="140" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หลังส่วนบน" cx="110" cy="90" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หลังส่วนล่าง" cx="110" cy="125" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หลังซ้าย" cx="95" cy="165" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-หลังขวา" cx="125" cy="165" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-เอวล่างซ้าย" cx="95" cy="155" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-เอวล่างขวา" cx="125" cy="155" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-บ่าไหล่ซ้าย" cx="80" cy="82" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-บ่าไหล่ขวา" cx="140" cy="82" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-แขนซ้าย" cx="65" cy="120" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-แขนขวา" cx="155" cy="120" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-ขาซ้าย" cx="95" cy="210" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-ขาขวา" cx="125" cy="210" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-เท้าซ้าย" cx="95" cy="260" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+            <circle class="preview-dot" id="pdot-เท้าขวา" cx="125" cy="260" r="6" fill="#e83d72" stroke="#c62850" stroke-width="2"/>
+          </svg>
+          <div style="font-size:12px; color:#667; margin-top:4px;">● จุดสีแดง = ตำแหน่งที่เลือก</div>
+        </div>
+      </div>
+      <div id="selectedLocations" class="selected-list">ยังไม่ได้เลือกตำแหน่ง</div>
+      
+      <div class="form-row">
+        <div>
+          <label>จำนวนเข็มที่ฝัง</label>
+          <input id="fNeedle" type="number" min="1" value="10">
+        </div>
+        <div>
+          <label>เวลาฝัง (นาที)</label>
+          <select id="fMinutes">
+            <option value="20">20 นาที</option>
+            <option value="30" selected>30 นาที</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label>แพทย์ผู้รักษา</label>
+          <select id="fDoctor">
+            <option value="พจ.979 ณรงค์ศักดิ์ รุ่งเรืองสกุลไชย">พจ.979 ณรงค์ศักดิ์ รุ่งเรืองสกุลไชย</option>
+          </select>
+        </div>
+        <div>
+          <label>ผู้ช่วยแพทย์แผนจีน</label>
+          <select id="fStaff">
+            <option value="ผช.พจ.ศิริกานต์">ผช.พจ.ศิริกานต์ แก้วเพ็ชร</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button class="btn btn-gray" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="savePatient()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div id="bigAlert" class="big-alert no-print">
+  <h1>🚨 STOP</h1>
+  <div id="bigText" class="box"></div>
+  <div class="sub">กรุณาตรวจผู้ป่วยและนับเข็มใหม่ก่อนดำเนินการต่อ</div>
+  <button id="ackBtn" class="btn btn-gray" onclick="acknowledgeMismatch()" style="font-size:18px;padding:14px 40px;">ยืนยันว่าตรวจผู้ป่วยแล้ว</button>
+</div>
+
+<script>
+// ============================================================
+//  MULTI-DEVICE SYNC via localStorage + storage event
+// ============================================================
+
+const KEY = "tcmNeedleBedsV2";
+const HISTORY_KEY = "tcmPatientHistoryV2"; // New: patient history database
+const BED_LIST = [
+  { bed: "M01", gender: "ชาย" },
+  { bed: "M02", gender: "ชาย" },
+  { bed: "F01", gender: "หญิง" },
+  { bed: "F02", gender: "หญิง" },
+  { bed: "F03", gender: "หญิง" },
+  { bed: "F04", gender: "หญิง" }
+];
+
+// ----- GLOBAL STATE -----
+let beds = [];
+let editIndex = null;
+let mismatchIndex = null;
+let audioCtx = null;
+let isRendering = false;
+let lastSyncTime = Date.now();
+
+// ----- PATIENT HISTORY DATABASE -----
+// Each entry: { id: timestamp, name, hn, gender, age, weight, height, bp, ptr, bmi, waist, 
+//               chiefComplaint, associatedSymptoms, pulse, tongue, currentDiagnosis, tcmDiagnosis,
+//               methods, locations, needle, minutes, doctor, staff, lastVisit }
+
+function getHistory() {
+  try {
+    const data = localStorage.getItem(HISTORY_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+
+function saveToHistory(patientData) {
+  try {
+    let history = getHistory();
+    // Remove any existing entry with same name + hn (if hn provided) or same name
+    const hn = patientData.hn ? patientData.hn.trim() : '';
+    const name = patientData.name ? patientData.name.trim() : '';
+    
+    if (hn) {
+      history = history.filter(h => h.hn !== hn);
+    } else if (name) {
+      // If no HN, use name as key (keep latest)
+      history = history.filter(h => h.name !== name);
+    }
+    
+    // Add new record with timestamp
+    const record = {
+      ...patientData,
+      id: Date.now(),
+      lastVisit: new Date().toISOString()
+    };
+    history.push(record);
+    
+    // Keep only last 200 records (prevent unlimited growth)
+    if (history.length > 200) {
+      history = history.slice(-200);
+    }
+    
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    return true;
+  } catch(e) {
+    console.error('Save history error:', e);
+    return false;
+  }
+}
+
+function searchHistory(query) {
+  if (!query || query.trim().length < 1) return [];
+  const q = query.trim().toLowerCase();
+  const history = getHistory();
+  
+  return history.filter(h => {
+    const name = (h.name || '').toLowerCase();
+    const hn = (h.hn || '').toLowerCase();
+    return name.includes(q) || hn.includes(q);
+  }).sort((a, b) => b.id - a.id); // Most recent first
+}
+
+function loadHistoryRecord(record) {
+  // Map fields from history record to form
+  const fieldMap = {
+    'fName': 'name',
+    'fHN': 'hn',
+    'fGender': 'gender',
+    'fAge': 'age',
+    'fWeight': 'weight',
+    'fHeight': 'height',
+    'fBP': 'bp',
+    'fPTR': 'ptr',
+    'fBMI': 'bmi',
+    'fWaist': 'waist',
+    'fChiefComplaint': 'chiefComplaint',
+    'fAssociatedSymptoms': 'associatedSymptoms',
+    'fPulse': 'pulse',
+    'fTongue': 'tongue',
+    'fCurrentDiagnosis': 'currentDiagnosis',
+    'fTCMDiagnosis': 'tcmDiagnosis',
+    'fNeedle': 'needle',
+    'fMinutes': 'minutes',
+    'fDoctor': 'doctor',
+    'fStaff': 'staff'
+  };
+  
+  for (const [fieldId, recordKey] of Object.entries(fieldMap)) {
+    const el = document.getElementById(fieldId);
+    if (el && record[recordKey] !== undefined && record[recordKey] !== null) {
+      el.value = record[recordKey];
+    }
+  }
+  
+  // Set gender if available
+  if (record.gender) {
+    document.getElementById('fGender').value = record.gender;
+  }
+  
+  // Set methods
+  document.querySelectorAll('#methodPicker input').forEach(cb => cb.checked = false);
+  if (record.methods && Array.isArray(record.methods)) {
+    record.methods.forEach(v => {
+      const cb = document.querySelector(`#methodPicker input[value="${CSS.escape(v)}"]`);
+      if (cb) cb.checked = true;
+    });
+  }
+  
+  // Set locations
+  document.querySelectorAll('.body-zone').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.preview-dot').forEach(el => el.classList.remove('visible'));
+  
+  if (record.locations && Array.isArray(record.locations)) {
+    record.locations.forEach(zone => {
+      document.querySelectorAll(`.body-zone[data-zone="${CSS.escape(zone)}"]`).forEach(el => el.classList.add('active'));
+      const dot = document.getElementById(`pdot-${zone}`);
+      if (dot) dot.classList.add('visible');
+    });
+    document.getElementById('selectedLocations').innerHTML = record.locations.map(v => 
+      `<span class="location active">${esc(v)}</span>`
+    ).join(' ') || 'ยังไม่ได้เลือกตำแหน่ง';
+  }
+  
+  // Auto-suggest bed: find first available bed matching gender
+  const usedBeds = new Set(beds.filter(b => b.name).map(b => b.bed));
+  const gender = record.gender || 'ชาย';
+  const available = BED_LIST.find(b => !usedBeds.has(b.bed) && b.gender === gender);
+  if (available) {
+    document.getElementById('fBed').value = available.bed;
+  } else {
+    // Try any available bed
+    const anyAvailable = BED_LIST.find(b => !usedBeds.has(b.bed));
+    if (anyAvailable) document.getElementById('fBed').value = anyAvailable.bed;
+  }
+  
+  // Close suggestions
+  document.getElementById('suggestionsList').classList.remove('show');
+}
+
+// ============================================================
+//  INIT BEDS
+// ============================================================
+function initBeds() {
+  const saved = localStorage.getItem(KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      const validBeds = parsed.filter(p => BED_LIST.some(b => b.bed === p.bed));
+      if (validBeds.length !== 6) {
+        return BED_LIST.map(b => ({ bed: b.bed, gender: b.gender }));
+      }
+      const existingBeds = new Set(validBeds.map(p => p.bed));
+      const allBeds = BED_LIST.map(b => b.bed);
+      if (!allBeds.every(b => existingBeds.has(b))) {
+        return BED_LIST.map(b => ({ bed: b.bed, gender: b.gender }));
+      }
+      return validBeds;
+    } catch (e) {
+      return BED_LIST.map(b => ({ bed: b.bed, gender: b.gender }));
+    }
+  }
+  return BED_LIST.map(b => ({ bed: b.bed, gender: b.gender }));
+}
+
+// ----- SAVE & SYNC -----
+function save() { 
+  try {
+    localStorage.setItem(KEY, JSON.stringify(beds));
+    lastSyncTime = Date.now();
+    updateSyncStatus(true);
+  } catch(e) {
+    console.error('Save error:', e);
+    updateSyncStatus(false);
+  }
+}
+
+// ----- SYNC STATUS UI -----
+function updateSyncStatus(online) {
+  const dot = document.getElementById('syncDot');
+  const text = document.getElementById('syncText');
+  if (online) {
+    dot.className = 'dot online';
+    text.textContent = '🔄 ซิงค์ข้อมูล';
+  } else {
+    dot.className = 'dot offline';
+    text.textContent = '⚠️ ไม่เชื่อมต่อ';
+  }
+}
+
+// ----- STORAGE EVENT - CROSS TAB/DEVICE SYNC -----
+window.addEventListener('storage', function(e) {
+  if (e.key === KEY && e.newValue) {
+    try {
+      const newData = JSON.parse(e.newValue);
+      if (JSON.stringify(newData) !== JSON.stringify(beds)) {
+        beds = newData;
+        if (document.getElementById('modal').classList.contains('show')) {
+          closeModal();
+        }
+        render();
+        updateSyncStatus(true);
+      }
+    } catch (err) {
+      console.error('Storage sync error:', err);
+    }
+  }
+});
+
+// ----- OTHER HELPERS -----
+function esc(x) { 
+  return String(x || '').replace(/[&<>"']/g, m => ({ 
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" 
+  }[m])); 
+}
+
+function state(p) {
+  if (!p || !p.name) return "free";
+  const elapsed = (Date.now() - p.start) / 60000;
+  if (p.removed !== p.needle && elapsed >= p.minutes) return "danger";
+  if (elapsed >= p.minutes - 5) return "warning";
+  return "using";
+}
+
+function beep(times = 3, urgent = false) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    for (let i = 0; i < times; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = urgent ? 'square' : 'sine';
+      o.frequency.value = urgent ? 880 : 660;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime + i * 0.45);
+      g.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + i * 0.45 + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + i * 0.45 + 0.25);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(audioCtx.currentTime + i * 0.45);
+      o.stop(audioCtx.currentTime + i * 0.45 + 0.28);
+    }
+  } catch (e) { }
+}
+
+// ============================================================
+//  PATIENT SUGGESTIONS (auto-complete)
+// ============================================================
+function showSuggestions() {
+  const nameField = document.getElementById('fName');
+  const hnField = document.getElementById('fHN');
+  const query = nameField.value.trim() || hnField.value.trim();
+  const list = document.getElementById('suggestionsList');
+  
+  if (!query || query.length < 1) {
+    list.classList.remove('show');
+    return;
+  }
+  
+  const results = searchHistory(query);
+  if (results.length === 0) {
+    list.classList.remove('show');
+    return;
+  }
+  
+  list.innerHTML = results.map(record => `
+    <div class="suggestion-item" onclick="loadHistoryRecord(${JSON.stringify(record).replace(/"/g, '&quot;')})">
+      <strong>${esc(record.name || 'ไม่ระบุชื่อ')}</strong>
+      <span class="suggestion-hn">HN: ${esc(record.hn || '-')}</span>
+      <span class="suggestion-hn">👤 ${esc(record.gender || '-')}</span>
+      <span class="suggestion-detail">🏥 ${esc(record.currentDiagnosis || record.tcmDiagnosis || 'ไม่ระบุวินิจฉัย')}</span>
+    </div>
+  `).join('');
+  list.classList.add('show');
+}
+
+function hideSuggestions() {
+  setTimeout(() => {
+    document.getElementById('suggestionsList').classList.remove('show');
+  }, 200);
+}
+
+// ============================================================
+//  MODAL FUNCTIONS
+// ============================================================
+function openAdd(index = null) {
+  const currentData = localStorage.getItem(KEY);
+  if (currentData) {
+    try {
+      const parsed = JSON.parse(currentData);
+      if (JSON.stringify(parsed) !== JSON.stringify(beds)) {
+        beds = parsed;
+        render();
+      }
+    } catch(e) {}
+  }
+  
+  editIndex = index;
+  document.getElementById("modal").classList.add("show");
+  
+  const fields = ["fName", "fHN", "fAge", "fNeedle", "fMinutes", "fStaff", 
+                  "fWeight", "fHeight", "fBP", "fPTR", "fBMI", "fWaist", 
+                  "fChiefComplaint", "fAssociatedSymptoms", "fPulse", "fTongue", 
+                  "fCurrentDiagnosis", "fTCMDiagnosis", "fDoctor"];
+  fields.forEach(x => {
+    const el = document.getElementById(x);
+    if (el) el.value = "";
+  });
+  
+  document.getElementById("fNeedle").value = 10;
+  document.getElementById("fMinutes").value = "30";
+  document.getElementById("fGender").value = "ชาย";
+  document.querySelectorAll("#methodPicker input").forEach(x => x.checked = false);
+  document.querySelectorAll(".body-zone").forEach(x => x.classList.remove("active"));
+  document.getElementById("selectedLocations").innerHTML = "ยังไม่ได้เลือกตำแหน่ง";
+  document.querySelectorAll('.preview-dot').forEach(d => d.classList.remove('visible'));
+  document.getElementById('suggestionsList').classList.remove('show');
+
+  if (index !== null && beds[index]) {
+    const p = beds[index];
+    document.getElementById("fBed").value = p.bed || "M01";
+    const map = {
+      "fName": "name", "fHN": "hn", "fAge": "age",
+      "fNeedle": "needle", "fMinutes": "minutes", "fStaff": "staff",
+      "fWeight": "weight", "fHeight": "height", "fBP": "bp", "fPTR": "ptr",
+      "fBMI": "bmi", "fWaist": "waist", "fChiefComplaint": "chiefComplaint",
+      "fAssociatedSymptoms": "associatedSymptoms", "fPulse": "pulse",
+      "fTongue": "tongue", "fCurrentDiagnosis": "currentDiagnosis",
+      "fTCMDiagnosis": "tcmDiagnosis", "fDoctor": "doctor"
+    };
+    for (const [id, key] of Object.entries(map)) {
+      const el = document.getElementById(id);
+      if (el) el.value = p[key] ?? "";
+    }
+    if (p.gender) document.getElementById("fGender").value = p.gender;
+    (p.methods || []).forEach(v => { 
+      const x = [...document.querySelectorAll("#methodPicker input")].find(x => x.value === v); 
+      if (x) x.checked = true; 
+    });
+    (p.locations || []).forEach(v => { 
+      document.querySelectorAll(`.body-zone[data-zone="${CSS.escape(v)}"]`).forEach(x => x.classList.add("active"));
+      const dot = document.getElementById(`pdot-${v}`);
+      if (dot) dot.classList.add('visible');
+    });
+    const locs = p.locations || [];
+    document.getElementById("selectedLocations").innerHTML = locs.length ? locs.map(v => `<span class="location active">${esc(v)}</span>`).join(" ") : "ยังไม่ได้เลือกตำแหน่ง";
+    document.getElementById("modalTitle").innerText = "แก้ไขข้อมูลผู้ป่วย";
+  } else {
+    const usedBeds = new Set(beds.filter(b => b.name).map(b => b.bed));
+    const available = BED_LIST.find(b => !usedBeds.has(b.bed));
+    document.getElementById("fBed").value = available ? available.bed : BED_LIST[0].bed;
+    document.getElementById("modalTitle").innerText = "เพิ่มผู้ป่วยเข้าห้องฝังเข็ม";
+  }
+  
+  // Add suggestion listeners
+  document.getElementById('fName').addEventListener('input', showSuggestions);
+  document.getElementById('fHN').addEventListener('input', showSuggestions);
+  document.getElementById('fName').addEventListener('blur', hideSuggestions);
+  document.getElementById('fHN').addEventListener('blur', hideSuggestions);
+}
+
+function closeModal() { 
+  document.getElementById("modal").classList.remove("show");
+  document.getElementById('suggestionsList').classList.remove('show');
+}
+
+function toggleZone(el) {
+  const zone = el.dataset.zone;
+  if (!zone) return;
+  const selected = new Set([...document.querySelectorAll(".body-zone.active")].map(x => x.dataset.zone).filter(Boolean));
+  if (selected.has(zone)) {
+    document.querySelectorAll(`.body-zone[data-zone="${CSS.escape(zone)}"]`).forEach(x => x.classList.remove("active"));
+    selected.delete(zone);
+    const dot = document.getElementById(`pdot-${zone}`);
+    if (dot) dot.classList.remove('visible');
+  } else {
+    document.querySelectorAll(`.body-zone[data-zone="${CSS.escape(zone)}"]`).forEach(x => x.classList.add("active"));
+    selected.add(zone);
+    const dot = document.getElementById(`pdot-${zone}`);
+    if (dot) dot.classList.add('visible');
+  }
+  document.getElementById("selectedLocations").innerHTML = selected.size ? [...selected].map(x => `<span class="location active">${esc(x)}</span>`).join(" ") : "ยังไม่ได้เลือกตำแหน่ง";
+}
+
+// ============================================================
+//  SAVE PATIENT
+// ============================================================
+function savePatient() {
+  try {
+    const methods = [...document.querySelectorAll("#methodPicker input:checked")].map(x => x.value);
+    const locations = [...new Set([...document.querySelectorAll(".body-zone.active")].map(x => x.dataset.zone).filter(Boolean))];
+    const bedVal = document.getElementById("fBed").value;
+    const nameVal = document.getElementById("fName").value.trim();
+    
+    if (!nameVal) { 
+      alert("กรุณาระบุชื่อผู้ป่วย"); 
+      return; 
+    }
+    
+    const existing = beds.findIndex((b, i) => b.bed === bedVal && b.name && i !== editIndex);
+    if (existing !== -1) { 
+      alert("เตียงนี้มีผู้ป่วยอยู่แล้ว"); 
+      return; 
+    }
+    
+    const p = {
+      bed: bedVal,
+      gender: document.getElementById("fGender").value || "ชาย",
+      name: nameVal,
+      hn: document.getElementById("fHN").value.trim(),
+      age: document.getElementById("fAge").value,
+      weight: document.getElementById("fWeight").value,
+      height: document.getElementById("fHeight").value,
+      bp: document.getElementById("fBP").value.trim(),
+      ptr: document.getElementById("fPTR").value.trim(),
+      bmi: document.getElementById("fBMI").value,
+      waist: document.getElementById("fWaist").value,
+      chiefComplaint: document.getElementById("fChiefComplaint").value.trim(),
+      associatedSymptoms: document.getElementById("fAssociatedSymptoms").value.trim(),
+      pulse: document.getElementById("fPulse").value.trim(),
+      tongue: document.getElementById("fTongue").value.trim(),
+      currentDiagnosis: document.getElementById("fCurrentDiagnosis").value.trim(),
+      tcmDiagnosis: document.getElementById("fTCMDiagnosis").value.trim(),
+      diagnosis: document.getElementById("fCurrentDiagnosis").value.trim() || document.getElementById("fTCMDiagnosis").value.trim(),
+      methods: methods,
+      locations: locations,
+      needle: parseInt(document.getElementById("fNeedle").value) || 10,
+      removed: 0,
+      minutes: parseInt(document.getElementById("fMinutes").value) || 30,
+      staff: document.getElementById("fStaff").value.trim(),
+      doctor: document.getElementById("fDoctor").value.trim(),
+      start: Date.now(),
+      paused: false,
+      alarmPlayed: false,
+      fiveMinPlayed: false,
+      acknowledged: false
+    };
+    
+    // Save to history database (patient record)
+    const historyRecord = {
+      name: p.name,
+      hn: p.hn || '',
+      gender: p.gender,
+      age: p.age,
+      weight: p.weight,
+      height: p.height,
+      bp: p.bp,
+      ptr: p.ptr,
+      bmi: p.bmi,
+      waist: p.waist,
+      chiefComplaint: p.chiefComplaint,
+      associatedSymptoms: p.associatedSymptoms,
+      pulse: p.pulse,
+      tongue: p.tongue,
+      currentDiagnosis: p.currentDiagnosis,
+      tcmDiagnosis: p.tcmDiagnosis,
+      methods: p.methods,
+      locations: p.locations,
+      needle: p.needle,
+      minutes: p.minutes,
+      doctor: p.doctor,
+      staff: p.staff
+    };
+    saveToHistory(historyRecord);
+    
+    if (editIndex === null) {
+      beds.push(p);
+    } else {
+      beds[editIndex] = p;
+    }
+    
+    save();
+    closeModal();
+    render();
+    
+  } catch(e) {
+    console.error('Save error:', e);
+    alert('เกิดข้อผิดพลาดในการบันทึก: ' + e.message);
+  }
+}
+
+// ============================================================
+//  BED ACTIONS
+// ============================================================
+function freeBed(i) {
+  if (i < 0 || i >= beds.length) return;
+  const bedId = beds[i].bed;
+  const gender = beds[i].gender || "ชาย";
+  beds[i] = { bed: bedId, gender: gender };
+  save();
+  render();
+}
+
+function addRemoved(i) {
+  if (i < 0 || i >= beds.length) return;
+  const p = beds[i];
+  if (!p.name) return;
+  if (p.removed < p.needle) p.removed++;
+  save();
+  render();
+}
+
+function finalCheck(i) {
+  if (i < 0 || i >= beds.length) return;
+  const p = beds[i];
+  if (!p.name) return;
+  if (p.removed !== p.needle) {
+    mismatchIndex = i;
+    p.acknowledged = false;
+    save();
+    document.getElementById("bigText").innerHTML =
+      `เตียง <b>${esc(p.bed)}</b><br>ผู้ป่วย ${esc(p.name)}<br>วินิจฉัย: ${esc(p.diagnosis || "-")}<br>วิธีรักษา: ${esc((p.methods || []).join(" / ") || "-")}<br>ฝัง ${p.needle} เข็ม แต่ถอดแล้ว ${p.removed} เข็ม<br><b>ยังเหลือ ${p.needle - p.removed} เข็ม — ห้ามปล่อยผู้ป่วยกลับ</b>`;
+    document.getElementById("ackBtn").innerText = "ยืนยันว่าตรวจผู้ป่วยแล้ว";
+    document.getElementById("bigAlert").classList.add("show");
+    beep(6, true);
+  } else {
+    alert(`✅ PASS\nเตียง ${p.bed}\n${p.name}\nตรวจครบ ${p.needle} เข็ม`);
+    freeBed(i);
+  }
+}
+
+function acknowledgeMismatch() {
+  if (mismatchIndex === null || mismatchIndex < 0 || mismatchIndex >= beds.length) return;
+  beds[mismatchIndex].acknowledged = true;
+  beds[mismatchIndex].ackAt = new Date().toLocaleString('th-TH');
+  save();
+  document.getElementById("bigAlert").classList.remove("show");
+  render();
+  alert("บันทึกการยืนยันแล้ว แต่ยังไม่สามารถจำหน่ายได้จนกว่าจำนวนเข็มจะตรงกัน");
+}
+
+// ============================================================
+//  GENERATE BODY SVG FOR PRINT (with dots at selected positions)
+// ============================================================
+function generateBodyPrintSVG(locations) {
+  const locSet = new Set(locations || []);
+  
+  // Define positions for all body parts
+  const positions = {
+    'ศีรษะ': { cx: 110, cy: 35 },
+    'หน้า': { cx: 110, cy: 25 },
+    'คอ': { cx: 110, cy: 52 },
+    'ต้นคอ': { cx: 110, cy: 52 },
+    'หน้าท้อง': { cx: 110, cy: 115 },
+    'หน้าท้องส่วนล่าง': { cx: 110, cy: 145 },
+    'หลังส่วนบน': { cx: 110, cy: 85 },
+    'หลังส่วนล่าง': { cx: 110, cy: 125 },
+    'แขนซ้าย': { cx: 55, cy: 105 },
+    'แขนขวา': { cx: 165, cy: 105 },
+    'บ่าไหล่ซ้าย': { cx: 75, cy: 78 },
+    'บ่าไหล่ขวา': { cx: 145, cy: 78 },
+    'เอวล่างซ้าย': { cx: 95, cy: 170 },
+    'เอวล่างขวา': { cx: 125, cy: 170 },
+    'หลังซ้าย': { cx: 95, cy: 160 },
+    'หลังขวา': { cx: 125, cy: 160 },
+    'ขาซ้าย': { cx: 95, cy: 215 },
+    'ขาขวา': { cx: 125, cy: 215 },
+    'เท้าซ้าย': { cx: 95, cy: 258 },
+    'เท้าขวา': { cx: 125, cy: 258 }
+  };
+
+  let dots = '';
+  for (const [name, pos] of Object.entries(positions)) {
+    if (locSet.has(name)) {
+      dots += `<circle cx="${pos.cx}" cy="${pos.cy}" r="7" fill="#e83d72" stroke="#c62850" stroke-width="2"/>`;
+    }
+  }
+
+  // Return the SVG with body outline and dots
+  return `
+    <svg viewBox="0 0 220 280" style="width:100%;max-width:180px;height:auto;display:block;margin:0 auto;">
+      <!-- Background -->
+      <rect x="5" y="5" width="210" height="270" rx="10" fill="#f8fafc" stroke="#dce3ec" stroke-width="1"/>
+      
+      <!-- Head -->
+      <circle cx="110" cy="40" r="28" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Torso -->
+      <path d="M70 80 L150 80 L155 185 L65 185 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Left arm -->
+      <path d="M70 85 L45 90 L30 140 L48 145 L68 100 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Right arm -->
+      <path d="M150 85 L175 90 L190 140 L172 145 L152 100 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Left leg -->
+      <path d="M82 180 L72 250 L95 250 L105 180 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Right leg -->
+      <path d="M138 180 L128 250 L145 250 L115 180 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      
+      <!-- Dots for selected positions -->
+      ${dots}
+      
+      <!-- Label -->
+      <text x="110" y="275" text-anchor="middle" font-size="11" fill="#666" font-weight="600">● จุดสีแดง = ตำแหน่งที่รักษา</text>
+    </svg>
+  `;
+}
+
+// ============================================================
+//  PRINT PATIENT RECORD - WITH BODY IMAGE
+// ============================================================
+function printPatientRecord(index) {
+  if (index < 0 || index >= beds.length) return;
+  const p = beds[index];
+  if (!p.name) { alert("ไม่มีข้อมูลผู้ป่วย"); return; }
+  
+  const date = new Date(p.start).toLocaleDateString('th-TH', { 
+    year: 'numeric', month: 'long', day: 'numeric' 
+  });
+  const time = new Date(p.start).toLocaleTimeString('th-TH', { 
+    hour: '2-digit', minute: '2-digit' 
+  });
+  const now = new Date().toLocaleString('th-TH');
+  
+  // Generate body SVG with selected locations
+  const bodySVG = generateBodyPrintSVG(p.locations);
+  
+  const printWindow = window.open('', '_blank', 'width=900,height=700');
+  if (!printWindow) {
+    alert("กรุณาอนุญาตให้เปิดหน้าต่างใหม่ (popup)");
+    return;
+  }
+  
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>แบบบันทึกการรักษา - ${esc(p.name)}</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: 'TH Sarabun New', 'Sarabun', 'Angsana New', 'Segoe UI', Arial, sans-serif;
+          background: #fff;
+          color: #1a1a1a;
+          font-size: 15px;
+          line-height: 1.4;
+          padding: 5px;
+        }
+        .page {
+          max-width: 210mm;
+          margin: 0 auto;
+          background: #fff;
+          padding: 10px 14px;
+          border: 2px solid #1a3a5c;
+        }
+        
+        /* HEADER */
+        .header {
+          text-align: center;
+          border-bottom: 3px double #1a3a5c;
+          padding-bottom: 5px;
+          margin-bottom: 6px;
+        }
+        .header .logo-area {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          margin-bottom: 2px;
+        }
+        .header .logo-area .emblem { font-size: 28px; }
+        .header .hospital-name {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1a3a5c;
+          letter-spacing: 2px;
+        }
+        .header .hospital-sub {
+          font-size: 12px;
+          color: #444;
+        }
+        .header .dept-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #1a3a5c;
+        }
+        .header .form-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #c0392b;
+          letter-spacing: 2px;
+          margin-top: 1px;
+        }
+        .header .form-id {
+          font-size: 13px;
+          color: #333;
+          margin-top: 1px;
+          background: #f0f4f8;
+          padding: 1px 10px;
+          display: inline-block;
+          border-radius: 4px;
+        }
+        .header .form-id span { margin: 0 8px; }
+        
+        .hn-highlight {
+          background: #fff3cd;
+          border: 2px solid #ffc107;
+          padding: 0 10px;
+          border-radius: 4px;
+          font-weight: 800;
+          font-size: 16px;
+          color: #856404;
+        }
+        
+        /* PATIENT TABLE */
+        .patient-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 6px;
+          font-size: 14px;
+        }
+        .patient-table td {
+          padding: 2px 6px;
+          border: 1px solid #666;
+          vertical-align: middle;
+        }
+        .patient-table .label {
+          font-weight: 700;
+          background: #e8edf3;
+          width: 14%;
+          color: #1a3a5c;
+          font-size: 14px;
+        }
+        .patient-table .value {
+          width: 36%;
+          background: #fff;
+          font-size: 14px;
+        }
+        .patient-table .label-sm {
+          width: 11%;
+          font-weight: 700;
+          background: #e8edf3;
+          color: #1a3a5c;
+          font-size: 14px;
+        }
+        .patient-table .value-sm {
+          width: 24%;
+          background: #fff;
+          font-size: 14px;
+        }
+        .patient-table .hn-cell {
+          background: #fffde7;
+          font-weight: 800;
+          font-size: 16px;
+          color: #1a3a5c;
+        }
+        
+        /* BODY + INFO GRID */
+        .body-info-grid {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 10px;
+          margin-bottom: 6px;
+        }
+        .body-image-area {
+          background: #f8fafc;
+          border: 1px solid #dce3ec;
+          border-radius: 8px;
+          padding: 8px;
+          text-align: center;
+        }
+        .body-image-area .body-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: #1a3a5c;
+          margin-bottom: 4px;
+        }
+        .body-image-area svg {
+          width: 100%;
+          max-width: 180px;
+          height: auto;
+        }
+        .info-area {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        
+        /* SECTIONS */
+        .section { margin-bottom: 4px; }
+        .section-title {
+          font-weight: 700;
+          font-size: 14px;
+          color: #1a3a5c;
+          background: #e8edf3;
+          padding: 1px 10px;
+          border-left: 4px solid #1a3a5c;
+          margin-bottom: 2px;
+        }
+        .section-content {
+          padding: 2px 12px;
+          font-size: 14px;
+          border-bottom: 1px solid #eee;
+        }
+        .section-content .row {
+          display: flex;
+          padding: 1px 0;
+        }
+        .section-content .row .lbl {
+          font-weight: 600;
+          min-width: 120px;
+          color: #333;
+          font-size: 14px;
+        }
+        .section-content .row .val {
+          flex: 1;
+          color: #1a1a1a;
+          font-size: 14px;
+        }
+        
+        .grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        
+        .tag-location {
+          display: inline-block;
+          background: #dff7ef;
+          color: #087f70;
+          padding: 0 10px;
+          border-radius: 3px;
+          font-size: 13px;
+          margin: 1px 3px 1px 0;
+          border: 1px solid #72d7bb;
+        }
+        .tag-method {
+          display: inline-block;
+          background: #eef4ff;
+          color: #2c5282;
+          padding: 0 10px;
+          border-radius: 3px;
+          font-size: 13px;
+          margin: 1px 3px 1px 0;
+          border: 1px solid #b8cce4;
+        }
+        
+        /* SIGNATURE */
+        .signature-box {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 30px;
+          margin-top: 6px;
+          padding-top: 6px;
+          border-top: 2px solid #1a3a5c;
+        }
+        .signature-box .sig-item { text-align: center; }
+        .signature-box .sig-line {
+          border-top: 1px solid #333;
+          padding-top: 3px;
+          margin-top: 14px;
+          width: 80%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .signature-box .sig-label {
+          font-size: 13px;
+          color: #444;
+          margin-top: 2px;
+        }
+        .signature-box .sig-label.bold {
+          font-weight: 600;
+          color: #1a3a5c;
+        }
+        
+        .footer {
+          margin-top: 5px;
+          padding-top: 4px;
+          border-top: 2px solid #1a3a5c;
+          text-align: center;
+          font-size: 11px;
+          color: #777;
+        }
+        
+        .print-actions {
+          text-align: center;
+          margin-top: 8px;
+          padding: 8px;
+          border-top: 1px solid #ddd;
+        }
+        .print-actions button {
+          padding: 6px 24px;
+          border: 0;
+          border-radius: 5px;
+          font-size: 14px;
+          cursor: pointer;
+          font-weight: 600;
+        }
+        .print-actions .btn-print { background: #1a3a5c; color: #fff; }
+        .print-actions .btn-print:hover { background: #0f2a44; }
+        .print-actions .btn-close { background: #edf1f5; color: #1e2a3a; margin-left: 8px; }
+        .print-actions .btn-close:hover { background: #dce3eb; }
+        
+        @media print {
+          .print-actions { display: none !important; }
+          body { padding: 0; font-size: 14px; }
+          .page { padding: 6px 10px; border: 2px solid #1a3a5c; box-shadow: none; max-width: 100%; }
+          .patient-table { font-size: 13px; }
+          .patient-table td { padding: 1px 4px; }
+          .patient-table .label { font-size: 13px; }
+          .patient-table .value { font-size: 13px; }
+          .patient-table .label-sm { font-size: 13px; }
+          .patient-table .value-sm { font-size: 13px; }
+          .patient-table .hn-cell { font-size: 14px; }
+          .section-content { font-size: 13px; padding: 1px 8px; }
+          .section-content .row .lbl { font-size: 13px; min-width: 100px; }
+          .section-content .row .val { font-size: 13px; }
+          .section-title { font-size: 13px; padding: 0 8px; }
+          .header .hospital-name { font-size: 18px; }
+          .header .form-title { font-size: 16px; }
+          .header .dept-name { font-size: 14px; }
+          .header .hospital-sub { font-size: 11px; }
+          .header .form-id { font-size: 12px; }
+          .header .logo-area .emblem { font-size: 24px; }
+          .signature-box .sig-line { width: 70%; margin-top: 12px; }
+          .signature-box .sig-label { font-size: 12px; }
+          .tag-location, .tag-method { font-size: 12px; padding: 0 8px; }
+          .grid-2 { gap: 5px; }
+          .section { margin-bottom: 3px; }
+          .footer { font-size: 10px; margin-top: 3px; padding-top: 3px; }
+          .hn-highlight { font-size: 14px; padding: 0 8px; }
+          .body-info-grid { gap: 6px; }
+          .body-image-area { padding: 4px; }
+          .body-image-area svg { max-width: 150px; }
+          .info-area .section-content { padding: 1px 6px; }
+        }
+        
+        @media (max-width: 600px) {
+          .grid-2 { grid-template-columns: 1fr; }
+          .body-info-grid { grid-template-columns: 1fr; }
+          .patient-table td { display: block; width: 100%; padding: 1px 3px; }
+          .patient-table .label, .patient-table .label-sm { width: 100%; }
+          .signature-box { grid-template-columns: 1fr; gap: 10px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="page">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+          <div class="logo-area">
+            <span class="emblem">⚕️</span>
+            <div>
+              <div class="hospital-name">โรงพยาบาลเฉลิมพระเกียรติ นครราชสีมา</div>
+              <div class="hospital-sub">สำนักงานสาธารณสุขจังหวัดนครราชสีมา กระทรวงสาธารณสุข</div>
+            </div>
+            <span class="emblem">🪡</span>
+          </div>
+          <div class="dept-name">กลุ่มงานการแพทย์แผนจีน</div>
+          <div class="form-title">แบบบันทึกการรักษาด้วยการฝังเข็ม</div>
+          <div class="form-id">
+            <span>📅 วันที่: ${date}</span>
+            <span>⏰ เวลา: ${time}</span>
+            <span>🛏 เตียง: ${p.bed}</span>
+            <span>📋 HN: <span class="hn-highlight">${esc(p.hn || '-')}</span></span>
+          </div>
+        </div>
+        
+        <!-- ===== PATIENT TABLE ===== -->
+        <table class="patient-table">
+          <tr>
+            <td class="label">👤 ชื่อ-นามสกุล</td>
+            <td class="value"><b>${esc(p.name)}</b></td>
+            <td class="label-sm">🎂 อายุ</td>
+            <td class="value-sm"><b>${esc(p.age || '-')}</b> ปี</td>
+          </tr>
+          <tr>
+            <td class="label">🧑‍⚕️ เพศ</td>
+            <td class="value"><b>${esc(p.gender)}</b></td>
+            <td class="label-sm">📋 HN</td>
+            <td class="value-sm hn-cell"><b>${esc(p.hn || '-')}</b></td>
+          </tr>
+          <tr>
+            <td class="label">⚖️ น้ำหนัก</td>
+            <td class="value">${esc(p.weight || '-')} กก.</td>
+            <td class="label-sm">📏 ส่วนสูง</td>
+            <td class="value-sm">${esc(p.height || '-')} ซม.</td>
+          </tr>
+          <tr>
+            <td class="label">💉 BP</td>
+            <td class="value">${esc(p.bp || '-')} mmHg</td>
+            <td class="label-sm">📊 P / T / R</td>
+            <td class="value-sm">${esc(p.ptr || '-')}</td>
+          </tr>
+          <tr>
+            <td class="label">📐 BMI</td>
+            <td class="value">${esc(p.bmi || '-')} kg/m²</td>
+            <td class="label-sm">📏 รอบเอว</td>
+            <td class="value-sm">${esc(p.waist || '-')} ซม.</td>
+          </tr>
+        </table>
+        
+        <!-- ===== BODY IMAGE + INFO ===== -->
+        <div class="body-info-grid">
+          <div class="body-image-area">
+            <div class="body-label">📍 ตำแหน่งที่รักษา</div>
+            ${bodySVG}
+          </div>
+          <div class="info-area">
+            <div class="section">
+              <div class="section-title">📋 อาการสำคัญ</div>
+              <div class="section-content">${esc(p.chiefComplaint || 'ไม่ระบุ')}</div>
+            </div>
+            <div class="section">
+              <div class="section-title">📋 อาการร่วม</div>
+              <div class="section-content">${esc(p.associatedSymptoms || 'ไม่ระบุ')}</div>
+            </div>
+            <div class="section">
+              <div class="section-title">🔍 ตรวจร่างกายแผนจีน</div>
+              <div class="section-content">
+                <div class="row"><span class="lbl">🌊 ชีพจร:</span><span class="val">${esc(p.pulse || 'ไม่ระบุ')}</span></div>
+                <div class="row"><span class="lbl">👅 ลิ้น:</span><span class="val">${esc(p.tongue || 'ไม่ระบุ')}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ===== DIAGNOSIS ===== -->
+        <div class="grid-2">
+          <div class="section">
+            <div class="section-title">🩺 การวินิจฉัยทางปัจจุบัน</div>
+            <div class="section-content">${esc(p.currentDiagnosis || p.diagnosis || 'ไม่ระบุ')}</div>
+          </div>
+          <div class="section">
+            <div class="section-title">🌿 การวินิจฉัยทางแพทย์แผนจีน</div>
+            <div class="section-content">${esc(p.tcmDiagnosis || 'ไม่ระบุ')}</div>
+          </div>
+        </div>
+        
+        <!-- ===== TREATMENT LOCATIONS (text list) ===== -->
+        <div class="section">
+          <div class="section-title">📍 รายละเอียดตำแหน่งที่รักษา</div>
+          <div class="section-content">
+            ${(p.locations || []).length ? (p.locations || []).map(v => `<span class="tag-location">${esc(v)}</span>`).join('') : 'ไม่ระบุ'}
+          </div>
+        </div>
+        
+        <!-- ===== NEEDLE & PROCEDURES ===== -->
+        <div class="grid-2">
+          <div class="section">
+            <div class="section-title">💉 ข้อมูลการฝังเข็ม</div>
+            <div class="section-content">
+              <div class="row"><span class="lbl">จำนวนเข็มที่ฝัง:</span><span class="val"><b>${p.needle}</b> เข็ม</span></div>
+              <div class="row"><span class="lbl">จำนวนเข็มที่ถอด:</span><span class="val"><b>${p.removed}</b> เข็ม</span></div>
+              <div class="row"><span class="lbl">เวลาฝังเข็ม:</span><span class="val">${p.minutes} นาที</span></div>
+              <div class="row"><span class="lbl">สถานะ:</span><span class="val">${p.removed === p.needle ? '✅ ถอดครบแล้ว' : '⏳ กำลังรักษา'}</span></div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">🛠 หัตถการที่ใช้</div>
+            <div class="section-content">
+              ${(p.methods || []).length ? (p.methods || []).map(v => `<span class="tag-method">${esc(v)}</span>`).join('') : 'ไม่ระบุ'}
+            </div>
+          </div>
+        </div>
+        
+        <!-- ===== MEDICAL TEAM ===== -->
+        <div class="section">
+          <div class="section-title">👨‍⚕️ ทีมผู้ให้บริการ</div>
+          <div class="section-content">
+            <div class="row"><span class="lbl">🧑‍⚕️ แพทย์ผู้รักษา:</span><span class="val"><b>${esc(p.doctor || 'ไม่ระบุ')}</b></span></div>
+            <div class="row"><span class="lbl">👨‍⚕️ ผู้ช่วยแพทย์แผนจีน:</span><span class="val"><b>${esc(p.staff || 'ไม่ระบุ')}</b></span></div>
+          </div>
+        </div>
+        
+        <!-- ===== SIGNATURE ===== -->
+        <div class="signature-box">
+          <div class="sig-item">
+            <div class="sig-line"></div>
+            <div class="sig-label bold">(แพทย์ผู้รักษา)</div>
+            <div class="sig-label">ลงชื่อ ..................................................</div>
+            <div class="sig-label" style="font-size:11px;color:#888;">วันที่ ...../...../.........</div>
+          </div>
+          <div class="sig-item">
+            <div class="sig-line"></div>
+            <div class="sig-label bold">(ผู้ช่วยแพทย์แผนจีน)</div>
+            <div class="sig-label">ลงชื่อ ..................................................</div>
+            <div class="sig-label" style="font-size:11px;color:#888;">วันที่ ...../...../.........</div>
+          </div>
+        </div>
+        
+        <!-- ===== FOOTER ===== -->
+        <div class="footer">
+          <div>📌 แบบบันทึกนี้เป็นเอกสารทางการแพทย์ ควรเก็บไว้เป็นหลักฐาน</div>
+          <div style="font-size:10px; color:#888; margin-top:1px;">
+            พิมพ์เมื่อ: ${now} | ระบบ TCM Safety Board v2.0
+          </div>
+        </div>
+        
+        <!-- ===== PRINT ACTIONS ===== -->
+        <div class="print-actions">
+          <button class="btn-print" onclick="window.print()">🖨 พิมพ์เอกสาร</button>
+          <button class="btn-close" onclick="window.close()">✕ ปิด</button>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+// ============================================================
+//  GENERATE BODY PREVIEW FOR CARD
+// ============================================================
+function generateBodyPreview(locations) {
+  const locSet = new Set(locations || []);
+  
+  const positions = {
+    'ศีรษะ': { cx: 70, cy: 25 },
+    'หน้า': { cx: 70, cy: 15 },
+    'คอ': { cx: 70, cy: 35 },
+    'ต้นคอ': { cx: 70, cy: 35 },
+    'บ่าไหล่ซ้าย': { cx: 45, cy: 45 },
+    'บ่าไหล่ขวา': { cx: 95, cy: 45 },
+    'หน้าท้อง': { cx: 70, cy: 70 },
+    'หน้าท้องส่วนล่าง': { cx: 70, cy: 90 },
+    'หลังส่วนบน': { cx: 70, cy: 60 },
+    'หลังส่วนล่าง': { cx: 70, cy: 80 },
+    'แขนซ้าย': { cx: 30, cy: 75 },
+    'แขนขวา': { cx: 110, cy: 75 },
+    'เอวล่างซ้าย': { cx: 50, cy: 100 },
+    'เอวล่างขวา': { cx: 90, cy: 100 },
+    'หลังซ้าย': { cx: 50, cy: 100 },
+    'หลังขวา': { cx: 90, cy: 100 },
+    'ขาซ้าย': { cx: 55, cy: 140 },
+    'ขาขวา': { cx: 85, cy: 140 },
+    'เท้าซ้าย': { cx: 55, cy: 175 },
+    'เท้าขวา': { cx: 85, cy: 175 }
+  };
+
+  let dots = '';
+  for (const [name, pos] of Object.entries(positions)) {
+    const visible = locSet.has(name) ? 'visible' : '';
+    dots += `<circle class="preview-dot-card ${visible}" cx="${pos.cx}" cy="${pos.cy}" r="5" fill="#e83d72" stroke="#c62850" stroke-width="2"/>`;
+  }
+
+  return `
+    <svg viewBox="0 0 140 200" style="width:100%;max-width:140px;height:140px;">
+      <rect x="5" y="5" width="130" height="190" rx="8" fill="#f0f5fa" stroke="#dce3ec" stroke-width="1"/>
+      <circle cx="70" cy="28" r="18" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      <path d="M45 52 L95 52 L98 120 L42 120 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      <path d="M45 55 L25 58 L18 100 L30 100 L42 70 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      <path d="M95 55 L115 58 L122 100 L110 100 L98 70 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      <path d="M52 115 L45 170 L60 170 L68 115 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      <path d="M88 115 L80 170 L95 170 L72 115 Z" fill="#e8edf2" stroke="#b0bcc7" stroke-width="1.5"/>
+      ${dots}
+    </svg>
+  `;
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function render() {
+  if (isRendering) return;
+  isRendering = true;
+  
+  try {
+    const q = document.getElementById("search").value.toLowerCase();
+    const filter = document.getElementById("filter").value;
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    let total = beds.length;
+    let using = 0, warning = 0, danger = 0, free = 0;
+    let male = 0, female = 0;
+
+    beds.forEach((p, i) => {
+      const s = state(p);
+      if (filter !== "all" && s !== filter) return;
+      if (q && !(`${p.bed} ${p.name||""} ${p.hn||""}`).toLowerCase().includes(q)) return;
+
+      if (p.name) {
+        if (s === "using") using++;
+        else if (s === "warning") warning++;
+        else if (s === "danger") danger++;
+        else free++;
+        if (p.gender === "ชาย") male++;
+        else if (p.gender === "หญิง") female++;
+      } else {
+        free++;
+      }
+
+      const isMale = p.gender === "ชาย";
+      const bedClass = isMale ? "male-bed" : "female-bed";
+      
+      if (!p.name) {
+        grid.innerHTML += `
+          <div class="card free">
+            <div class="card-head"><span class="bed ${bedClass}">● ${p.bed}</span><span class="menu">⋮</span></div>
+            <div class="free-body"><div class="plus">＋</div><b>เตียงว่าง (${p.gender})</b><br><button class="btn btn-primary empty-btn" onclick="openAdd(${i})">เพิ่มผู้ป่วย</button></div>
+          </div>`;
+        return;
+      }
+
+      const elapsed = Math.max(0, (Date.now() - p.start) / 60000);
+      const percent = Math.min(100, elapsed / p.minutes * 100);
+      const remaining = Math.max(0, Math.ceil(p.minutes - elapsed));
+      const dot = s === "danger" ? "status-danger" : s === "warning" ? "status-warn" : "status-using";
+      const alertClass = s === "danger" ? "bad" : s === "warning" ? "warn" : "ok";
+      const alertText = s === "danger" ? "🚨 ครบเวลาแล้ว — ต้องตรวจสอบเข็ม" : s === "warning" ? "⏰ เหลือเวลาประมาณ " + remaining + " นาที" : "● กำลังรักษา";
+      const avatarClass = p.gender === "หญิง" ? "female" : "male";
+      const genderEmoji = p.gender === "หญิง" ? "👩" : "👨";
+
+      const bodyPreview = generateBodyPreview(p.locations);
+      const hasLocations = (p.locations || []).length > 0;
+
+      grid.innerHTML += `
+        <div class="card ${s}">
+          <div class="card-head">
+            <span class="bed ${bedClass}"><span class="status-dot ${dot}"></span>เตียง ${p.bed}</span>
+            <span class="menu" onclick="openAdd(${i})">☰</span>
+          </div>
+          <div class="patient">
+            <div class="avatar ${avatarClass}">${genderEmoji}</div>
+            <div class="name">${esc(p.name)}</div>
+            <div class="meta">HN: ${esc(p.hn||"-")} · อายุ ${esc(p.age||"-")} ปี · ${esc(p.gender||"ไม่ระบุ")}</div>
+            <div class="tags">
+              ${(p.methods||[]).map(m=>`<span class="tag green">${esc(m)}</span>`).join("") || '<span class="tag orange">ยังไม่ระบุวิธีรักษา</span>'}
+              <span class="tag ${s==="danger"?"red":"purple"}">${esc(p.doctor||"รอระบุแพทย์")}</span>
+            </div>
+          </div>
+          <div class="treatment-panel">
+            <div class="field-title">วินิจฉัยโรค</div>
+            <div class="diagnosis">${esc(p.diagnosis||p.currentDiagnosis||"ยังไม่ระบุ")}</div>
+            <div class="field-title">ตำแหน่งที่ฝังเข็ม / รักษา</div>
+            <div class="locations">${(p.locations||[]).slice(0,8).map(v=>`<span class="location active">${esc(v)}</span>`).join("")}${(p.locations||[]).length>8?`<span class="location more">+${p.locations.length-8} จุด</span>`:""}${!(p.locations||[]).length?'<span class="location">ยังไม่ระบุ</span>':""}</div>
+          </div>
+          ${hasLocations ? `
+          <div class="body-preview">
+            <div class="preview-label">📍 ตำแหน่งที่รักษา</div>
+            ${bodyPreview}
+          </div>` : ''}
+          <div class="needle-panel">
+            <div class="needle-row">
+              <div class="needle-box"><small>ฝังทั้งหมด</small><b>${p.needle}</b><small>เข็ม</small></div>
+              <div class="needle-box"><small>ถอดแล้ว</small><b>${p.removed}</b><small>เข็ม</small></div>
+            </div>
+            <div class="progress"><i style="width:${percent}%"></i></div>
+            <div class="time-label">เวลาฝัง ${p.minutes} นาที · เหลือ ${remaining} นาที</div>
+          </div>
+          <div class="alert show ${alertClass}">${alertText}</div>
+          ${p.acknowledged?`<div class="danger-ack">⚠️ ผู้ช่วยยืนยันว่าตรวจผู้ป่วยแล้ว เวลา ${esc(p.ackAt||"")} — รอแก้จำนวนเข็มให้ตรงกัน</div>`:""}
+          <div class="actions no-print">
+            <button class="check" onclick="addRemoved(${i})">✓ ถอดเข็ม +1</button>
+            <button class="print-btn" onclick="printPatientRecord(${i})">🖨 พิมพ์</button>
+            <button class="discharge" onclick="finalCheck(${i})">จำหน่าย</button>
+          </div>
+        </div>`;
+    });
+
+    document.getElementById("totalBeds").innerText = total;
+    document.getElementById("usingCount").innerText = using;
+    document.getElementById("warningCount").innerText = warning;
+    document.getElementById("dangerCount").innerText = danger;
+    document.getElementById("freeCount").innerText = free;
+    document.getElementById("maleCount").innerText = male;
+    document.getElementById("femaleCount").innerText = female;
+    
+    updateSyncStatus(true);
+    
+  } catch(e) {
+    console.error('Render error:', e);
+  } finally {
+    isRendering = false;
+  }
+}
+
+// ============================================================
+//  MONITOR TIMERS
+// ============================================================
+function monitorTimers() {
+  try {
+    let changed = false;
+    beds.forEach((p, i) => {
+      if (!p.name || p.alarmPlayed) return;
+      const elapsed = (Date.now() - p.start) / 60000;
+      if (elapsed >= p.minutes) {
+        p.alarmPlayed = true;
+        changed = true;
+        beep(8, true);
+        alert(`⏰ ครบเวลาฝังเข็ม\nเตียง ${p.bed}\nผู้ป่วย ${p.name}\nกรุณาถอดเข็มและตรวจนับให้ครบ ${p.needle} เข็ม`);
+      } else if (elapsed >= p.minutes - 5 && !p.fiveMinPlayed) {
+        p.fiveMinPlayed = true;
+        changed = true;
+        beep(3, false);
+      }
+    });
+    if (changed) {
+      save();
+    }
+  } catch(e) {
+    console.error('Monitor error:', e);
+  }
+}
+
+// ============================================================
+//  SETTINGS
+// ============================================================
+function openSettings() {
+  const historyCount = getHistory().length;
+  alert("🪡 TCM Safety Board v2.0 - Multi-Device Sync\n\n" +
+        "✅ เปิดได้พร้อมกันหลายเครื่อง/หลายแท็บ\n" +
+        "✅ ข้อมูลซิงค์กันอัตโนมัติ (localStorage + storage event)\n" +
+        "✅ เตียงทั้งหมด 6 เตียง (ชาย 2, หญิง 4)\n" +
+        "✅ แสดงตำแหน่งรักษาบนรูปคนจำลอง\n" +
+        "✅ พิมพ์บันทึกผู้ป่วยแบบฟอร์มทางการ (A4)\n" +
+        "✅ แดชบอร์ดเรียลไทม์\n" +
+        "✅ ระบบเตือนเสียงและยืนยันเข็ม\n" +
+        "✅ ระบบค้นหาประวัติผู้ป่วยอัตโนมัติ (มี ${historyCount} รายการ)\n\n" +
+        "💡 เปิดหลายเครื่องพร้อมกัน: ใช้เบราว์เซอร์คนละตัว หรือเปิดหลายแท็บ");
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+beds = initBeds();
+save();
+render();
+setInterval(() => { monitorTimers(); render(); }, 3000);
+
+// Add suggestion dropdown container to modal
+document.addEventListener('DOMContentLoaded', function() {
+  const nameField = document.getElementById('fName');
+  const hnField = document.getElementById('fHN');
+  
+  // Wrap name field with suggestions container if not already
+  const nameParent = nameField.parentElement;
+  const container = document.createElement('div');
+  container.className = 'suggestions-box';
+  container.style.position = 'relative';
+  container.style.width = '100%';
+  
+  // Create suggestions list
+  const list = document.createElement('div');
+  list.id = 'suggestionsList';
+  list.className = 'suggestions-list';
+  
+  // Move name field into container
+  nameParent.replaceChild(container, nameField);
+  container.appendChild(nameField);
+  container.appendChild(list);
+  
+  // Also add to HN field's parent if needed, but we'll use the same list
+  // Since both fields should show suggestions in the same list, 
+  // we'll position it under the name field (which is the main search)
+  // Just add event listeners to HN to trigger the same list
+  
+  // Add click outside to close
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.suggestions-box') && !e.target.closest('#fHN')) {
+      document.getElementById('suggestionsList').classList.remove('show');
+    }
+  });
+});
+
+</script>
+</body>
+</html>
