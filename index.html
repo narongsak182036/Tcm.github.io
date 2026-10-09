@@ -221,6 +221,7 @@
   .ds-cell.good{background:var(--ok-bg);border-color:#bde0c8;}
   .ds-cell.mid{background:var(--warn-bg);border-color:#f0dcb4;}
   .ds-cell.bad{background:var(--bad-bg);border-color:#f0c5c5;}
+  .ds-cell.chk{outline:2px solid var(--navy);outline-offset:-1px;}
   .ds-legend{font-size:.72rem;color:var(--muted);margin-top:5px;}
   .ds-notes{margin-top:6px;font-size:.78rem;}
   .ds-note{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -481,8 +482,10 @@
         <div id="compare-content" style="display:none;">
           <div class="stat-grid">
             <div class="stat"><div class="label">Baseline</div><div class="value" id="cmp-base">-</div></div>
+            <div class="stat"><div class="label">วันที่ 5</div><div class="value" id="cmp-d5">-</div></div>
+            <div class="stat"><div class="label">วันที่ 10</div><div class="value" id="cmp-d10">-</div></div>
             <div class="stat"><div class="label">วันที่ 15</div><div class="value" id="cmp-d15">-</div></div>
-            <div class="stat"><div class="label">วันที่ 30</div><div class="value" id="cmp-d30">-</div></div>
+            <div class="stat"><div class="label">วันที่ 20</div><div class="value" id="cmp-d20">-</div></div>
             <div class="stat accent"><div class="label">การเปลี่ยนแปลง</div><div class="value" id="cmp-change">-</div><div class="sub" id="cmp-change-sub"></div></div>
           </div>
           <div class="chart-grid">
@@ -903,11 +906,14 @@ function dailyAtDay(p,n){ return p.startDate ? (p.daily&&p.daily[dateOfDay(p.sta
 function effAssess(p){
   const a=p.assessments, f=firstDaily(p), l=lastDaily(p);
   const baseline = a.baseline || f || null;
+  const day5 = dailyAtDay(p,5);
+  const day10 = dailyAtDay(p,10);
+  const day20 = dailyAtDay(p,20);
   const day15 = a.day15 || dailyAtDay(p,15);
   const day30 = a.day30 || dailyAtDay(p,30);
   const latest = l || a.day30 || a.day15 || a.baseline || null;
   const end = (latest && latest!==baseline) ? latest : null;
-  return {baseline,day15,day30,latest,end};
+  return {baseline,day5,day10,day15,day20,day30,latest,end};
 }
 function doneDays(p){
   const s=new Set();
@@ -1106,7 +1112,7 @@ function dailyReportTable(p){
   for(let n=1; n<=30; n++){
     const r = p.daily[dateOfDay(p.startDate,n)];
     const cls = r ? getLevel(r.total).cls.replace('score-','') : '';
-    cells += `<div class="ds-cell ${cls}"><span>วันที่ ${n}</span><b>${r?r.total:'–'}</b>${r&&r.trained?'<i>✓</i>':''}</div>`;
+    cells += `<div class="ds-cell ${cls}${(n===5||n===10||n===15||n===20)?' chk':''}"><span>วันที่ ${n}</span><b>${r?r.total:'–'}</b>${r&&r.trained?'<i>✓</i>':''}</div>`;
   }
   const trained = keys.filter(k=>p.daily[k].trained).length;
   // only the most recent notes, one line each, so the page height stays bounded
@@ -1115,7 +1121,7 @@ function dailyReportTable(p){
     return `<div class="ds-note"><b>วันที่ ${n}:</b> ${escapeHtml(p.daily[k].note)}</div>`;
   }).join('');
   return `<div class="day-strip">${cells}</div>
-    <div class="ds-legend">✓ = ทำกิจกรรมฝึกแล้ว (${trained} วัน) • สีเขียว ≥ 80 • สีเหลือง 40–79 • สีแดง &lt; 40</div>
+    <div class="ds-legend">✓ = ทำกิจกรรมฝึกแล้ว (${trained} วัน) • สีเขียว ≥ 80 • สีเหลือง 40–79 • สีแดง &lt; 40 • กรอบหนา = วันที่ประเมินเปรียบเทียบ (วันที่ 5, 10, 15, 20)</div>
     ${notes?`<div class="ds-notes">${notes}</div>`:''}`;
 }
 
@@ -1128,10 +1134,12 @@ function renderCompareTab(){
   const content = document.getElementById('compare-content');
   if(!p){ emptyState(info,NEED_PATIENT); content.style.display='none'; return; }
   info.style.display='none'; content.style.display='block';
-  const E = effAssess(p); const base=E.baseline, d15=E.day15, d30=E.day30;
+  const E = effAssess(p); const base=E.baseline, d5=E.day5, d10=E.day10, d15=E.day15, d20=E.day20;
   document.getElementById('cmp-base').textContent = base?base.total:'-';
+  document.getElementById('cmp-d5').textContent = d5?d5.total:'-';
+  document.getElementById('cmp-d10').textContent = d10?d10.total:'-';
   document.getElementById('cmp-d15').textContent = d15?d15.total:'-';
-  document.getElementById('cmp-d30').textContent = d30?d30.total:'-';
+  document.getElementById('cmp-d20').textContent = d20?d20.total:'-';
   let change='-', sub='';
   const end = E.end;
   if(base && end){
@@ -1143,7 +1151,7 @@ function renderCompareTab(){
   document.getElementById('cmp-change-sub').textContent = sub;
 
   document.getElementById('trend-chart').innerHTML = dailyKeys(p).length>=2 ? dailyTrendChart(p) : trendChart([
-    {l:'Baseline',v:base?base.total:null},{l:'วันที่ 15',v:d15?d15.total:null},{l:'วันที่ 30',v:d30?d30.total:null}]);
+    {l:'Baseline',v:base?base.total:null},{l:'วันที่ 5',v:d5?d5.total:null},{l:'วันที่ 10',v:d10?d10.total:null},{l:'วันที่ 15',v:d15?d15.total:null},{l:'วันที่ 20',v:d20?d20.total:null}]);
 
   const latest = E.latest;
   document.getElementById('item-bars').innerHTML = ADL_ITEMS.map(item=>{
@@ -1161,14 +1169,15 @@ function renderCompareTab(){
 
   const rows = ADL_ITEMS.map(item=>{
     const b = base&&base.scores?base.scores[item.id]:null;
-    const m = d15&&d15.scores?d15.scores[item.id]:null;
-    const e = d30&&d30.scores?d30.scores[item.id]:null;
-    const diff = (b!==null&&(e!==null||m!==null)) ? ((e!==null?e:m)-b) : null;
+    const pick = c => c&&c.scores&&c.scores[item.id]!==undefined ? c.scores[item.id] : null;
+    const cp = [d5,d10,d15,d20].map(pick);
+    const lastCp = cp.filter(v=>v!==null).pop();
+    const diff = (b!==null && lastCp!==undefined) ? lastCp-b : null;
     const g = p.goals&&p.goals[item.id]!==undefined?p.goals[item.id]:'-';
-    return `<tr><td>${item.name}</td><td class="num">${b!==null?b:'-'}</td><td class="num">${m!==null?m:'-'}</td><td class="num">${e!==null?e:'-'}</td><td class="num">${g}</td><td class="num">${deltaHtml(diff)}</td></tr>`;
+    return `<tr><td>${item.name}</td><td class="num">${b!==null?b:'-'}</td>${cp.map(v=>`<td class="num">${v!==null?v:'-'}</td>`).join('')}<td class="num">${g}</td><td class="num">${deltaHtml(diff)}</td></tr>`;
   }).join('');
   document.getElementById('compare-table').innerHTML = `<table>
-    <thead><tr><th>กิจกรรม</th><th class="num">Baseline</th><th class="num">วันที่ 15</th><th class="num">วันที่ 30</th><th class="num">เป้าหมาย</th><th class="num">เปลี่ยนแปลง</th></tr></thead>
+    <thead><tr><th>กิจกรรม</th><th class="num">Baseline</th><th class="num">วันที่ 5</th><th class="num">วันที่ 10</th><th class="num">วันที่ 15</th><th class="num">วันที่ 20</th><th class="num">เป้าหมาย</th><th class="num">เปลี่ยนแปลง</th></tr></thead>
     <tbody>${rows}</tbody></table>`;
 }
 
@@ -1210,7 +1219,7 @@ function renderReportTab(){
 
 function renderReportBody(){
   const p = getCurrentPatient(); if(!p) return;
-  const E = effAssess(p); const base=E.baseline, d15=E.day15, d30=E.day30;
+  const E = effAssess(p); const base=E.baseline, d5=E.day5, d10=E.day10, d15=E.day15, d20=E.day20;
   const done = programDone(p);
   const end = E.end;
   const itemRows = ADL_ITEMS.map(item=>{
@@ -1258,7 +1267,7 @@ function renderReportBody(){
     <h3>คะแนน Barthel ADL Index</h3>
     <table>
       <thead><tr><th>ช่วงเวลา</th><th class="num">คะแนน (เต็ม 100)</th><th>ระดับการพึ่งพิง</th><th>วันที่ประเมิน</th></tr></thead>
-      <tbody>${row('ก่อนเริ่ม (Baseline)',base)}${row('วันที่ 15',d15)}${row('วันที่ 30',d30)}</tbody>
+      <tbody>${row('ก่อนเริ่ม (Baseline)',base)}${row('วันที่ 5',d5)}${row('วันที่ 10',d10)}${row('วันที่ 15',d15)}${row('วันที่ 20',d20)}</tbody>
     </table>
 
     <h3>รายละเอียดรายกิจกรรม</h3>
